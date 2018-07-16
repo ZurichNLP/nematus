@@ -294,7 +294,7 @@ def init_params(options):
 # bidirectional RNN encoder: take input x (optionally with mask), and produce sequence of context vectors (ctx)
 def build_encoder(tparams, options, dropout, x_mask=None, sampling=False, suffix='', embedding_suffix=''):
 
-    logger.info("Building encoder with suffix=%s, embedding_suffix=%s" % suffix, embedding_suffix)
+    logger.info("Building encoder with suffix=%s, embedding_suffix=%s" % (suffix, embedding_suffix))
 
     x = tensor.tensor3('x' + suffix, dtype='int64')
     # source text; factors 1; length 5; batch size 10
