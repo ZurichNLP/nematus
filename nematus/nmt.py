@@ -311,10 +311,10 @@ def build_encoder(tparams, options, dropout, x_mask=None, sampling=False, suffix
     n_samples = x.shape[2]
 
     # word embedding for forward rnn (source)
-    emb = get_layer_constr('embedding')(tparams, x, suffix=embedding_layer_id, factors=options['factors'])
+    emb = get_layer_constr('embedding')(tparams, x, suffix=suffix, factors=options['factors'])
 
     # word embedding for backward rnn (source)
-    embr = get_layer_constr('embedding')(tparams, xr, suffix=embedding_layer_id, factors=options['factors'])
+    embr = get_layer_constr('embedding')(tparams, xr, suffix=suffix, factors=options['factors'])
 
     if options['use_dropout']:
         source_dropout = dropout((n_timesteps, n_samples, 1), options['dropout_source'])
