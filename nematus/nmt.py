@@ -310,10 +310,6 @@ def build_encoder(tparams, options, dropout, x_mask=None, sampling=False, suffix
     n_timesteps = x.shape[1]
     n_samples = x.shape[2]
 
-    embedding_layer_id = suffix
-    if int(suffix) > 0 and options["tie_encoder_embeddings"]:
-        embedding_layer_id = "0"
-
     # word embedding for forward rnn (source)
     emb = get_layer_constr('embedding')(tparams, x, suffix=embedding_layer_id, factors=options['factors'])
 
