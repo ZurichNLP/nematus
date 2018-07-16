@@ -696,7 +696,7 @@ def build_multisource_model(tparams, options):
             suff = ""
         elif i > 0 and options['tie_encoder_embeddings']:
             # then figure out type
-            type = options['extra_sources_types'][i]
+            type = options['extra_sources_types'][i-1]
             if type == "s":
                 # extra source-side encoder
                 suff = "0"
