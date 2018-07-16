@@ -292,9 +292,9 @@ def init_params(options):
 
 
 # bidirectional RNN encoder: take input x (optionally with mask), and produce sequence of context vectors (ctx)
-def build_encoder(tparams, options, dropout, x_mask=None, sampling=False, suffix=''):
+def build_encoder(tparams, options, dropout, x_mask=None, sampling=False, suffix='', embedding_suffix=''):
 
-    logger.info("Building encoder with suffix=%s" % suffix)
+    logger.info("Building encoder with suffix=%s, embedding_suffix=%s" % suffix, embedding_suffix)
 
     x = tensor.tensor3('x' + suffix, dtype='int64')
     # source text; factors 1; length 5; batch size 10
@@ -311,10 +311,10 @@ def build_encoder(tparams, options, dropout, x_mask=None, sampling=False, suffix
     n_samples = x.shape[2]
 
     # word embedding for forward rnn (source)
-    emb = get_layer_constr('embedding')(tparams, x, suffix=suffix, factors=options['factors'])
+    emb = get_layer_constr('embedding')(tparams, x, suffix=embedding_suffix, factors=options['factors'])
 
     # word embedding for backward rnn (source)
-    embr = get_layer_constr('embedding')(tparams, xr, suffix=suffix, factors=options['factors'])
+    embr = get_layer_constr('embedding')(tparams, xr, suffix=embedding_suffix, factors=options['factors'])
 
     if options['use_dropout']:
         source_dropout = dropout((n_timesteps, n_samples, 1), options['dropout_source'])
@@ -693,17 +693,17 @@ def build_multisource_model(tparams, options):
             type = options['extra_sources_types'][i-1]
             if type == "s":
                 # extra source-side encoder
-                suff = "0"
+                embedding_suffix = "0"
             else:
                 # extra target-side encoder
-                suff = "_dec"
+                embedding_suffix = "_dec"
         else:
-            suff = str(i)
+            embedding_suffix = str(i)
         x_masks[i] = tensor.matrix('x_mask' + suff, dtype=floatX)
         # source text length 5; batch size 10
         x_masks[i].tag.test_value = numpy.ones(shape=(5, 10)).astype(floatX)
 
-        xs[i], ctxs[i] = build_encoder(tparams, options, dropout, x_masks[i], sampling=False, suffix=suff)
+        xs[i], ctxs[i] = build_encoder(tparams, options, dropout, x_masks[i], sampling=False, str(i), embedding_suffix)
 
         n_samples[i] = xs[i].shape[2]
         # mean of the context (across time) will be used to initialize decoder rnn
