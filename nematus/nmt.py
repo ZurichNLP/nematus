@@ -783,8 +783,17 @@ def build_multi_sampler(tparams, options, use_noise, trng, return_alignment=Fals
 
     # build each of the encoders (first is main one and following ones are auxiliary ones)
     for i in range(num_encoders):
-        if num_encoders==1:
-            suff=''
+        if num_encoders == 1:
+            suff = ""
+        elif i > 0 and options['tie_encoder_embeddings']:
+            # then figure out type
+            type = options['extra_sources_types'][i-1]
+            if type == "s":
+                # extra source-side encoder
+                suff = "0"
+            else:
+                # extra target-side encoder
+                suff = "_dec"
         else:
             suff = str(i)
 
