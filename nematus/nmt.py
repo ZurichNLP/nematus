@@ -165,12 +165,12 @@ def init_params(options):
         # embedding
         if i > 0 and options['tie_encoder_embeddings']:
             # then reuse existing parameters
-            logger.debug("Skipping initialization of embedding layer for encoder %d" % i)
+            logger.info("Skipping initialization of embedding layer for encoder %d" % i)
         else:
             # else every encoder has their own embedding parameters
             params = get_layer_param('embedding')(options, params, options['n_words_src'][i],
                                               options['dim_per_factor'], options['factors'], suffix=suff)
-            logger.debug("Embedding layer with n_words=%d, dim=%s, suffix=%s" % (options['n_words_src'][i], str(options['dim_per_factor']), i))
+            logger.info("Embedding layer with n_words=%d, dim=%s, suffix=%s" % (options['n_words_src'][i], str(options['dim_per_factor']), i))
 
         # encoder: bidirectional RNN: same for single and multi-source
         params = get_layer_param(options['encoder'])(options, params,
@@ -293,6 +293,9 @@ def init_params(options):
 
 # bidirectional RNN encoder: take input x (optionally with mask), and produce sequence of context vectors (ctx)
 def build_encoder(tparams, options, dropout, x_mask=None, sampling=False, suffix=''):
+
+    logger.info("Building encoder with suffix=%s" % suffix)
+
     x = tensor.tensor3('x' + suffix, dtype='int64')
     # source text; factors 1; length 5; batch size 10
     x.tag.test_value = (numpy.random.rand(1, 5, 10) * 100).astype('int64')
