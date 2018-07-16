@@ -160,10 +160,7 @@ def init_params(options):
 
     # initialise encoder for every possible encoder (for now they have have the same parameter values)
     for i in range(num_encoders):
-        if num_encoders > 1:
-            suff = str(i)
-        else:
-            suff = ''
+        suff = str(i)
 
         # embedding
         if i > 0 and options['tie_encoder_embeddings']:
@@ -173,7 +170,7 @@ def init_params(options):
             # else every encoder has their own embedding parameters
             params = get_layer_param('embedding')(options, params, options['n_words_src'][i],
                                               options['dim_per_factor'], options['factors'], suffix=suff)
-            logger.debug("Embedding layer with n_words=%d, dim=%s, suffix=_%s" % (options['n_words_src'][i], str(options['dim_per_factor']), i))
+            logger.debug("Embedding layer with n_words=%d, dim=%s, suffix=%s" % (options['n_words_src'][i], str(options['dim_per_factor']), i))
 
         # encoder: bidirectional RNN: same for single and multi-source
         params = get_layer_param(options['encoder'])(options, params,
@@ -688,9 +685,7 @@ def build_multisource_model(tparams, options):
 
     # ------------ encoder(s) ------------
     for i in range(num_encoders):
-        if i == 0:
-            suff = ""
-        elif i > 0 and options['tie_encoder_embeddings']:
+        if i > 0 and options['tie_encoder_embeddings']:
             # then figure out type
             type = options['extra_sources_types'][i-1]
             if type == "s":
@@ -783,9 +778,7 @@ def build_multi_sampler(tparams, options, use_noise, trng, return_alignment=Fals
 
     # build each of the encoders (first is main one and following ones are auxiliary ones)
     for i in range(num_encoders):
-        if i == 0:
-            suff = ""
-        elif i > 0 and options['tie_encoder_embeddings']:
+        if i > 0 and options['tie_encoder_embeddings']:
             # then figure out type
             type = options['extra_sources_types'][i-1]
             if type == "s":
