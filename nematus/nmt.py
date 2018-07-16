@@ -699,11 +699,14 @@ def build_multisource_model(tparams, options):
                 embedding_suffix = "_dec"
         else:
             embedding_suffix = str(i)
-        x_masks[i] = tensor.matrix('x_mask' + suff, dtype=floatX)
+
+        suffix = str(i)
+
+        x_masks[i] = tensor.matrix('x_mask' + suffix, dtype=floatX)
         # source text length 5; batch size 10
         x_masks[i].tag.test_value = numpy.ones(shape=(5, 10)).astype(floatX)
 
-        xs[i], ctxs[i] = build_encoder(tparams, options, dropout, x_masks[i], sampling=False, suffix=str(i), embedding_suffix=embedding_suffix)
+        xs[i], ctxs[i] = build_encoder(tparams, options, dropout, x_masks[i], sampling=False, suffix=suffix, embedding_suffix=embedding_suffix)
 
         n_samples[i] = xs[i].shape[2]
         # mean of the context (across time) will be used to initialize decoder rnn
@@ -786,14 +789,16 @@ def build_multi_sampler(tparams, options, use_noise, trng, return_alignment=Fals
             type = options['extra_sources_types'][i-1]
             if type == "s":
                 # extra source-side encoder
-                suff = "0"
+                embedding_suffix = "0"
             else:
                 # extra target-side encoder
-                suff = "_dec"
+                embedding_suffix = "_dec"
         else:
-            suff = str(i)
+            embedding_suffix = str(i)
 
-        xs[i], ctxs[i] = build_encoder(tparams, options, dropout, x_mask=None, sampling=True, suffix=suff)
+        suffix = str(i)
+
+        xs[i], ctxs[i] = build_encoder(tparams, options, dropout, x_mask=None, sampling=True, suffix=suffix, embedding_suffix=embedding_suffix)
         n_samples = xs[i].shape[2]
         # get the input for decoder rnn initializer mlp
         ctx_means[i] = ctxs[i].mean(0)
