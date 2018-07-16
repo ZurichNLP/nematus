@@ -693,7 +693,16 @@ def build_multisource_model(tparams, options):
     # ------------ encoder(s) ------------
     for i in range(num_encoders):
         if num_encoders == 1:
-            suff = ''
+            suff = ""
+        elif i > 0 and options['tie_encoder_embeddings']:
+            # then figure out type
+            type = options['extra_sources_types'][i]
+            if type == "s":
+                # extra source-side encoder
+                suff = "0"
+            else:
+                # extra target-side encoder
+                suff = "_dec"
         else:
             suff = str(i)
         x_masks[i] = tensor.matrix('x_mask' + suff, dtype=floatX)
@@ -1529,7 +1538,8 @@ def train(dim_word=512,  # word vector dimensionality
           extra_n_words_src=[],
           multisource_type=None, # multisource combination type
           debugm=False,
-          tie_encoder_embeddings=False # multiple encoders: share embedding parameters
+          tie_encoder_embeddings=False, # multiple encoders: share embedding parameters
+          extra_sources_types=[]  # types of extra sources: whether they are source side or target side
           ):
     # ---------------- Model options ----------------
     model_options = OrderedDict(sorted(locals().copy().items()))
@@ -2476,6 +2486,10 @@ if __name__ == '__main__':
     multi = parser.add_argument_group('multiple source input parameters')
     multi.add_argument('--extra_sources', type=str, metavar='PATH', nargs='+',
                        help="auxiliary parallel training corpus (source)", default=[])
+    multi.add_argument('--extra_sources_types', type=str, metavar='STR', default=[], nargs='+',
+                       choices=["s", "t"],
+                       help="describe type of extra sources: s=source side or t=target side"
+                            "same order as extra sources, separated by space.")
     multi.add_argument('--extra_source_dicts', type=str, metavar='PATH', nargs="+", default=[],
                        help="auxiliary network vocabularies (one per source factor) in order of extra inputs")
     multi.add_argument('--extra_source_dicts_nums', type=int, metavar='INT', nargs="+", default=[],
