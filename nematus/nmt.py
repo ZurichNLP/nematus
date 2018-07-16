@@ -703,7 +703,7 @@ def build_multisource_model(tparams, options):
         # source text length 5; batch size 10
         x_masks[i].tag.test_value = numpy.ones(shape=(5, 10)).astype(floatX)
 
-        xs[i], ctxs[i] = build_encoder(tparams, options, dropout, x_masks[i], sampling=False, str(i), embedding_suffix)
+        xs[i], ctxs[i] = build_encoder(tparams, options, dropout, x_masks[i], sampling=False, suffix=str(i), embedding_suffix=embedding_suffix)
 
         n_samples[i] = xs[i].shape[2]
         # mean of the context (across time) will be used to initialize decoder rnn
