@@ -2301,10 +2301,7 @@ def _set_up_logging(args):
                         filename=log_path,
                         filemode=write_mode)
 
-    if args.verbose:
-        level = logging.DEBUG
-    else:
-        level = logging.INFO
+    level = logging.INFO
 
     # log to STDERR
     console = logging.StreamHandler()
