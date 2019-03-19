@@ -170,7 +170,9 @@ def multi_rescore_model(source_file, target_file, savetos, models, options, b,
                          options[0]['dictionaries'][:-1], options[0]['dictionaries'][-1],
                          n_words_source=options[0]['n_words_src'], n_words_target=options[0]['n_words'],
                          batch_size=b, maxlen=float('inf'), sort_by_length=False,
-                         extra_sources=[ss.name for ss in extra_sources])
+                         extra_sources=[ss.name for ss in extra_sources],
+                         extra_source_dicts=[[d] for d in options[0]['extra_source_dicts']],
+                         extra_source_dicts_nums=options[0]['extra_source_dicts_nums'])
     # TODO: sorting by length could be more efficient, but we'd want to resort after
 
     scores, all_alignments, costs_per_word = _score(sents, alignweights)
